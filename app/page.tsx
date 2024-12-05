@@ -57,7 +57,7 @@
       }));
     };
 
-    const handleMenuSelect = (type, value) => {
+    const handleMenuSelect = (type: string, value: string) => {
       setSelectedMenu((prev) => ({ ...prev, [type]: value }));
 
       if (type === 'karbohidrat') {

@@ -1,17 +1,12 @@
   "use client";
-  import { useState } from 'react';
+  import { useState, useMemo } from 'react';
 
   export default function Home() {
-    const [formData, setFormData] = useState<{
-      nama: string;
-      umur: string;
-      pengenMakan: string;
-      selectedSakit: string;
-    }>({
-      nama: '',
-      umur: '',
-      pengenMakan: '',
-      selectedSakit: '',
+    const [formData, setFormData] = useState({
+      nama: "",
+      umur: "",
+      pengenMakan: "",
+      selectedSakit: "",
     });
 
     const [selectedMenu, setSelectedMenu] = useState({
@@ -22,7 +17,7 @@
       subKarbohidrat: '', // Menyimpan sub-opsi karbohidrat
     });
 
-    const [subMenu, setSubMenu] = useState([]); // Menyimpan sub-opsi dinamis
+    const [subMenu, setSubMenu] = useState<{ id: string; name: string}[]>([]); // Menyimpan sub-opsi dinamis
 
     const sakitOptions = [
       { id: 'flu', name: 'Flu' },
@@ -36,7 +31,8 @@
         { id: 'ubi', name: 'Ubi Jalar', subOptions: [
             { id: 'ubi-kuning', name: 'Ubi Jalar Kuning' },
             { id: 'ubi-ungu', name: 'Ubi Jalar Ungu' },
-          ] },
+          ] 
+        },
         { id: 'makaroni', name: 'Makaroni' },
       ],
       Protein: [
@@ -53,7 +49,7 @@
       ],
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       setFormData((prev) => ({
         ...prev,
@@ -66,12 +62,18 @@
 
       if (type === 'karbohidrat') {
         const selectedOption = giziOptions.Karbohidrat.find((item) => item.id === value);
-        setSubMenu(selectedOption.subOptions || []);
+        setSubMenu(selectedOption?.subOptions || []);
         setSelectedMenu((prev) => ({ ...prev, subKarbohidrat: '' })); // Reset sub-opsi ketika memilih karbohidrat baru
       }
-    };
+    };  
 
-    const isComplete = Object.values(selectedMenu).every((item) => item !== '');
+    const isComplete =
+      selectedMenu.karbohidrat &&
+      selectedMenu.protein &&
+      selectedMenu.sayur &&
+      selectedMenu.buah &&
+      (!subMenu.length || selectedMenu.subKarbohidrat);
+      Object.values(selectedMenu).every((item) => item !== '');
 
     return (
       <div style={{ padding: '2rem' }}>

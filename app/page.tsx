@@ -1,101 +1,237 @@
-import Image from "next/image";
+  "use client";
+  import { useState } from 'react';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  export default function Home() {
+    const [formData, setFormData] = useState<{
+      nama: string;
+      umur: string;
+      pengenMakan: string;
+      selectedSakit: string;
+    }>({
+      nama: '',
+      umur: '',
+      pengenMakan: '',
+      selectedSakit: '',
+    });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const [selectedMenu, setSelectedMenu] = useState({
+      karbohidrat: '',
+      protein: '',
+      sayur: '',
+      buah: '',
+      subKarbohidrat: '', // Menyimpan sub-opsi karbohidrat
+    });
+
+    const [subMenu, setSubMenu] = useState([]); // Menyimpan sub-opsi dinamis
+
+    const sakitOptions = [
+      { id: 'flu', name: 'Flu' },
+      { id: 'demam', name: 'Demam' },
+      { id: 'batuk', name: 'Batuk' },
+      { id: 'migrain', name: 'Migrain' },
+    ];
+
+    const giziOptions = {
+      Karbohidrat: [
+        { id: 'ubi', name: 'Ubi Jalar', subOptions: [
+            { id: 'ubi-kuning', name: 'Ubi Jalar Kuning' },
+            { id: 'ubi-ungu', name: 'Ubi Jalar Ungu' },
+          ] },
+        { id: 'makaroni', name: 'Makaroni' },
+      ],
+      Protein: [
+        { id: 'ikan', name: 'Ikan' },
+        { id: 'ayam', name: 'Ayam' },
+      ],
+      Sayur: [
+        { id: 'bayam', name: 'Bayam' },
+        { id: 'kangkung', name: 'Kangkung' },
+      ],
+      Buah: [
+        { id: 'apel', name: 'Apel' },
+        { id: 'jeruk', name: 'Jeruk' },
+      ],
+    };
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
+    const handleMenuSelect = (type, value) => {
+      setSelectedMenu((prev) => ({ ...prev, [type]: value }));
+
+      if (type === 'karbohidrat') {
+        const selectedOption = giziOptions.Karbohidrat.find((item) => item.id === value);
+        setSubMenu(selectedOption.subOptions || []);
+        setSelectedMenu((prev) => ({ ...prev, subKarbohidrat: '' })); // Reset sub-opsi ketika memilih karbohidrat baru
+      }
+    };
+
+    const isComplete = Object.values(selectedMenu).every((item) => item !== '');
+
+    return (
+      <div style={{ padding: '2rem' }}>
+        <h1>Rekomendasi Menu</h1>
+        
+        {/* Input Nama */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Nama:</label>
+          <input
+            type="text"
+            name="nama"
+            value={formData.nama}
+            onChange={handleInputChange}
+            style={{ marginLeft: '1rem' }}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* Input Umur */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Umur:</label>
+          <input
+            type="number"
+            name="umur"
+            value={formData.umur}
+            onChange={handleInputChange}
+            style={{ marginLeft: '1rem' }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        </div>
+
+        {/* Input Pengen Makan Apa */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Pengen Makan Apa:</label>
+          <input
+            type="text"
+            name="pengenMakan"
+            value={formData.pengenMakan}
+            onChange={handleInputChange}
+            style={{ marginLeft: '1rem' }}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+        </div>
+
+        {/* Pilihan Penyakit */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Penyakit:</label>
+          <select
+            name="selectedSakit"
+            value={formData.selectedSakit}
+            onChange={handleInputChange}
+            style={{ marginLeft: '1rem' }}
+          >
+            <option value="">Pilih Penyakit</option>
+            {sakitOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Pilihan Gizi jika penyakit telah dipilih */}
+        {formData.selectedSakit && (
+          <div style={{ marginTop: '2rem', backgroundColor: '#d4edda', padding: '1rem' }}>
+            <h2>Pilih Menu Makanan</h2>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label>Karbohidrat:</label>
+              <select
+                onChange={(e) => handleMenuSelect('karbohidrat', e.target.value)}
+                style={{ marginLeft: '1rem' }}
+              >
+                <option value="">Pilih Karbohidrat</option>
+                {giziOptions.Karbohidrat.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sub-opsi untuk Karbohidrat */}
+            {subMenu.length > 0 && (
+              <div style={{ marginBottom: '1rem' }}>
+                <label>Sub-opsi Karbohidrat:</label>
+                <select
+                  onChange={(e) => handleMenuSelect('subKarbohidrat', e.target.value)}
+                  style={{ marginLeft: '1rem' }}
+                >
+                  <option value="">Pilih Sub-opsi</option>
+                  {subMenu.map((subOption) => (
+                    <option key={subOption.id} value={subOption.id}>
+                      {subOption.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Pilihan Protein, Sayur, dan Buah */}
+            <div style={{ marginBottom: '1rem' }}>
+              <label>Protein:</label>
+              <select
+                onChange={(e) => handleMenuSelect('protein', e.target.value)}
+                style={{ marginLeft: '1rem' }}
+              >
+                <option value="">Pilih Protein</option>
+                {giziOptions.Protein.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label>Sayur:</label>
+              <select
+                onChange={(e) => handleMenuSelect('sayur', e.target.value)}
+                style={{ marginLeft: '1rem' }}
+              >
+                <option value="">Pilih Sayur</option>
+                {giziOptions.Sayur.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label>Buah:</label>
+              <select
+                onChange={(e) => handleMenuSelect('buah', e.target.value)}
+                style={{ marginLeft: '1rem' }}
+              >
+                <option value="">Pilih Buah</option>
+                {giziOptions.Buah.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Hasil */}
+        {isComplete && (
+          <div style={{ marginTop: '2rem', backgroundColor: '#d1ecf1', padding: '1rem' }}>
+            <h2>Rekomendasi Makanan</h2>
+            <p><strong>Nama:</strong> {formData.nama}</p>
+            <p><strong>Umur:</strong> {formData.umur}</p>
+            <p><strong>Pengen Makan:</strong> {formData.pengenMakan}</p>
+            <p><strong>Penyakit:</strong> {sakitOptions.find((s) => s.id === formData.selectedSakit)?.name}</p>
+            <p><strong>Karbohidrat:</strong> {giziOptions.Karbohidrat.find((k) => k.id === selectedMenu.karbohidrat)?.name}</p>
+            <p><strong>Sub-opsi Karbohidrat:</strong> {giziOptions.Karbohidrat.find((k) => k.id === selectedMenu.karbohidrat)?.subOptions.find((sub) => sub.id === selectedMenu.subKarbohidrat)?.name}</p>
+            <p><strong>Protein:</strong> {giziOptions.Protein.find((p) => p.id === selectedMenu.protein)?.name}</p>
+            <p><strong>Sayur:</strong> {giziOptions.Sayur.find((s) => s.id === selectedMenu.sayur)?.name}</p>
+            <p><strong>Buah:</strong> {giziOptions.Buah.find((b) => b.id === selectedMenu.buah)?.name}</p>
+          </div>
+        )}
+      </div>
+    );
+  }

@@ -228,7 +228,7 @@
             <p><strong>Pengen Makan:</strong> {formData.pengenMakan}</p>
             <p><strong>Penyakit:</strong> {sakitOptions.find((s) => s.id === formData.selectedSakit)?.name}</p>
             <p><strong>Karbohidrat:</strong> {giziOptions.Karbohidrat.find((k) => k.id === selectedMenu.karbohidrat)?.name}</p>
-            <p><strong>Sub-opsi Karbohidrat:</strong> {giziOptions.Karbohidrat.find((k) => k.id === selectedMenu.karbohidrat)?.subOptions.find((sub) => sub.id === selectedMenu.subKarbohidrat)?.name}</p>
+            <p><strong>Sub-opsi Karbohidrat:</strong> {giziOptions.Karbohidrat.find((k) => k.id === selectedMenu.karbohidrat)?.subOptions?.find((sub) => sub.id === selectedMenu.subKarbohidrat)?.name}</p>
             <p><strong>Protein:</strong> {giziOptions.Protein.find((p) => p.id === selectedMenu.protein)?.name}</p>
             <p><strong>Sayur:</strong> {giziOptions.Sayur.find((s) => s.id === selectedMenu.sayur)?.name}</p>
             <p><strong>Buah:</strong> {giziOptions.Buah.find((b) => b.id === selectedMenu.buah)?.name}</p>
